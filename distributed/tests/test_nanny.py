@@ -318,6 +318,15 @@ def test_scheduler_address_config(c, s):
     yield nanny.close()
 
 
+@gen_cluster(ncores=[], client=True)
+def test_scheduler_address_env(c, s):
+    with dask.config.set({"scheduler_address": s.address}):
+        nanny = yield Nanny(loop=s.loop)
+        assert nanny.scheduler.address == s.address
+
+    yield nanny.close()
+
+
 @slow
 @gen_test()
 def test_wait_for_scheduler():

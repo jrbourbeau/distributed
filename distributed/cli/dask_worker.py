@@ -8,8 +8,8 @@ from sys import exit
 import warnings
 
 import click
+import dask
 from distributed import Nanny, Worker
-from distributed.config import config
 from distributed.utils import parse_timedelta
 from distributed.worker import _ncores
 from distributed.security import Security
@@ -321,7 +321,7 @@ def main(
     if (
         not scheduler
         and not scheduler_file
-        and config.get("scheduler-address", None) is not None
+        and dask.config.get("scheduler-address", None) is None
     ):
         raise ValueError(
             "Need to provide scheduler address like\n"

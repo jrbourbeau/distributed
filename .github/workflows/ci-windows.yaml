@@ -1,13 +1,14 @@
-name: Windows CI
+name: Tests CI
 
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [windows-latest, macos-latest]
         python-version: ["3.6", "3.7", "3.8"]
 
     steps:

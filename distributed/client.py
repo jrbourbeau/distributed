@@ -2650,10 +2650,18 @@ class Client:
 
             # Create futures before sending graph (helps avoid contention)
             futures = {key: Future(key, self, inform=False) for key in keyset}
+
+            # TODO: remove when str_graph() supports HLGs
+            if not isinstance(dsk, HighLevelGraph):
+                dsk = HighLevelGraph.from_collections(id(dsk), dsk, dependencies=())
+
+            # Serialize all tasks before sending them to the scheduler
+            dsk = dsk.map_tasks(dumps_task)
+
             self._send_to_scheduler(
                 {
-                    "op": "update-graph",
-                    "tasks": valmap(dumps_task, dsk),
+                    "op": "update-graph-hlg",
+                    "hlg": dsk,
                     "dependencies": dependencies,
                     "keys": list(map(tokey, keys)),
                     "restrictions": restrictions or {},

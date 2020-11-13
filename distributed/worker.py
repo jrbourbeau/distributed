@@ -1445,7 +1445,7 @@ class Worker(ServerNode):
 
             if priority is not None:
                 priority = tuple(priority) + (self.generation,)
-                self.generation -= 1
+                self.generation += 1
 
             if actor:
                 self.actors[ts.key] = None

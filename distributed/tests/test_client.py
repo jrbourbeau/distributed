@@ -5605,6 +5605,25 @@ async def test_nested_prioritization(c, s, w):
     )
 
 
+@gen_cluster(client=True, nthreads=[("127.0.0.1", 1)])
+async def test_submit_task_order(c, s, a):
+    # Test that tasks which are submitted in rapid succession
+    # are executed in the same order
+
+    f1 = c.submit(slowinc, 1)
+    f2 = c.submit(slowinc, 2)
+    await f1
+    await f2
+
+    # Extract the start time for f1 and f2
+    f1_startstops = a.tasks[f1.key].startstops
+    f1_start = next(i["start"] for i in f1_startstops if i["action"] == "compute")
+    f2_startstops = a.tasks[f2.key].startstops
+    f2_start = next(i["start"] for i in f2_startstops if i["action"] == "compute")
+
+    assert f2_start > f1_start
+
+
 @gen_cluster(client=True)
 async def test_scatter_error_cancel(c, s, a, b):
     # https://github.com/dask/distributed/issues/2038

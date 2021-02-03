@@ -31,5 +31,6 @@ dependencies:
   - pip
   - pip:
       - git+https://github.com/dask/dask.git@master
+      - git+https://github.com/crusaderky/dask.git@postpersist
       - git+https://github.com/joblib/joblib.git@master
       - git+https://github.com/dask/zict.git@master

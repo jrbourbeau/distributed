@@ -20,6 +20,8 @@ def itemsize(dt):
 
 @dask_serialize.register(np.ndarray)
 def serialize_numpy_ndarray(x, context=None):
+    if (x.dtype.flags & np.core.multiarray.LIST_PICKLE) and not x.dtype.hasobject:
+        raise ValueError("AAAAHHHHH")
     if x.dtype.hasobject or (x.dtype.flags & np.core.multiarray.LIST_PICKLE):
         header = {"pickle": True}
         frames = [None]

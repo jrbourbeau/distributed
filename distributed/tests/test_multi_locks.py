@@ -84,8 +84,8 @@ async def test_timeout_wake_waiter(c, s, a, b):
 
     assert await l2_acquire is False
     assert await l3_acquire
-    l1.release()
-    l3.release()
+    await l1.release()
+    await l3.release()
 
 
 @gen_cluster(client=True)

@@ -2183,7 +2183,7 @@ async def test_retire_state_change(c, s, a, b):
         k = c.map(lambda i: i * np.random.randint(1000), v)
         foo = c.map(lambda j: j * 6, k)
         step = c.compute(foo)
-        c.gather(step)
+        await c.gather(step)
     await c.retire_workers(workers=[a.address])
 
 

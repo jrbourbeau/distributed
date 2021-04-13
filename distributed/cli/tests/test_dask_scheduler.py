@@ -78,7 +78,7 @@ def test_dashboard(loop):
 
         names = ["localhost", "127.0.0.1", get_ip()]
         if "linux" in sys.platform:
-            names.append(socket.gethostname())
+            names.append(socket.getfqdn())
 
         start = time()
         while True:

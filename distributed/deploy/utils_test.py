@@ -8,7 +8,7 @@ class ClusterTest:
     kwargs = {}
 
     def setUp(self):
-        self.cluster = self.Cluster(2, scheduler_port=0, **self.kwargs)
+        self.cluster = self.Cluster(2, **self.kwargs)
         self.client = Client(self.cluster.scheduler_address)
 
     def tearDown(self):
@@ -30,5 +30,5 @@ class ClusterTest:
                 assert e.nthreads()
 
     def test_no_workers(self):
-        with self.Cluster(0, scheduler_port=0, **self.kwargs):
+        with self.Cluster(0, **self.kwargs):
             pass

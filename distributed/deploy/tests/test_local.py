@@ -5,7 +5,6 @@ import sys
 import unittest
 import weakref
 from distutils.version import LooseVersion
-from functools import partial
 from threading import Lock
 from time import sleep
 
@@ -174,8 +173,13 @@ def test_transports_tcp_port():
 
 
 class LocalTest(ClusterTest, unittest.TestCase):
-    Cluster = partial(LocalCluster, silence_logs=False, dashboard_address=None)
-    kwargs = {"dashboard_address": None, "processes": False}
+    Cluster = LocalCluster
+    kwargs = {
+        "scheduler_port": 0,
+        "dashboard_address": ":0",
+        "processes": False,
+        "silence_logs": False,
+    }
 
 
 def test_Client_with_local(loop):
@@ -250,8 +254,8 @@ def test_Client_unused_kwargs_with_address(loop):
 
 
 def test_Client_twice(loop):
-    with Client(loop=loop, silence_logs=False, dashboard_address=None) as c:
-        with Client(loop=loop, silence_logs=False, dashboard_address=None) as f:
+    with Client(loop=loop, silence_logs=False, dashboard_address=":0") as c:
+        with Client(loop=loop, silence_logs=False, dashboard_address=":0") as f:
             assert c.cluster.scheduler.port != f.cluster.scheduler.port
 
 
@@ -1050,9 +1054,11 @@ async def test_no_workers(cleanup):
 
 @pytest.mark.asyncio
 async def test_cluster_names():
-    async with LocalCluster(processes=False, asynchronous=True) as unnamed_cluster:
+    async with LocalCluster(
+        processes=False, asynchronous=True, dashboard_address=":0"
+    ) as unnamed_cluster:
         async with LocalCluster(
-            processes=False, asynchronous=True, name="mycluster"
+            processes=False, asynchronous=True, dashboard_address=":0", name="mycluster"
         ) as named_cluster:
             assert isinstance(unnamed_cluster.name, str)
             assert isinstance(named_cluster.name, str)
@@ -1061,5 +1067,7 @@ async def test_cluster_names():
             assert named_cluster == named_cluster
             assert unnamed_cluster != named_cluster
 
-        async with LocalCluster(processes=False, asynchronous=True) as unnamed_cluster2:
+        async with LocalCluster(
+            processes=False, dashboard_address=":0", asynchronous=True
+        ) as unnamed_cluster2:
             assert unnamed_cluster2 != unnamed_cluster

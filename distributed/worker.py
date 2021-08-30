@@ -2556,6 +2556,7 @@ class Worker(ServerNode):
 
             for dep in deps:
                 if dep.suspicious_count > 5:
+                    breakpoint()
                     deps.remove(dep)
                     self.bad_dep(dep)
             if not deps:

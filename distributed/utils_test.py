@@ -1051,8 +1051,8 @@ def terminate_process(proc):
 
 @contextmanager
 def popen(args, **kwargs):
-    kwargs["stdout"] = subprocess.PIPE
-    kwargs["stderr"] = subprocess.PIPE
+    # kwargs["stdout"] = subprocess.PIPE
+    # kwargs["stderr"] = subprocess.PIPE
     if sys.platform.startswith("win"):
         # Allow using CTRL_C_EVENT / CTRL_BREAK_EVENT
         kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP

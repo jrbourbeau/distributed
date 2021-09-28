@@ -505,7 +505,7 @@ def dask_setup(worker):
 """
     async with Scheduler(port=0) as s:
         async with Client(s.address, asynchronous=True) as c:
-            env = {"DASK_DISTRIBUTED__WORKER__PRELOAD": preload_text}
+            env = {**os.environ, **{"DASK_DISTRIBUTED__WORKER__PRELOAD": preload_text}}
             with popen(
                 [
                     "dask-worker",

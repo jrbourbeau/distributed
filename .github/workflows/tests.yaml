@@ -72,6 +72,10 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' && matrix.python-version == '3.9' }}
         run: mamba uninstall ipython
 
+      - name: Install openssl 3
+        shell: bash -l {0}
+        run: mamba install openssl=3
+
       - name: Install
         shell: bash -l {0}
         run: |

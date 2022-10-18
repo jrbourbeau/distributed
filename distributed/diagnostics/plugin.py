@@ -8,10 +8,13 @@ import subprocess
 import sys
 import uuid
 import zipfile
+from collections import defaultdict
 from collections.abc import Awaitable
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from dask.utils import funcname, tmpfile
+
+import distributed
 
 if TYPE_CHECKING:
     from distributed.scheduler import Scheduler, TaskStateState  # circular imports
@@ -599,3 +602,23 @@ class UploadDirectory(NannyPlugin):
                 sys.path.insert(0, path)
 
         os.remove(fn)
+
+
+class ForwardTaskErrors(SchedulerPlugin):
+    name = "forward-task-errors"
+
+    def start(self, scheduler):
+        self.scheduler = scheduler
+        self.group_key_counter = defaultdict(int)
+
+    def transition(self, key, start, finish, *args, **kwargs):
+        if finish == "erred":
+            ts = self.scheduler.tasks[key]
+            # Limit the number of times we print in user's Python session for each task group
+            if self.group_key_counter[ts.group_key] < 10:
+                self.group_key_counter[ts.group_key] += 1
+                msg = (
+                    f"While computing task {key} on worker(s) {ts.erred_on} an error "
+                    f"occured with the following traceback\n{ts.traceback_text}"
+                )
+                distributed.print(msg)

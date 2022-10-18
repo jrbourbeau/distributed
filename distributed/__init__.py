@@ -31,6 +31,7 @@ from distributed.deploy import Adaptive, LocalCluster, SpecCluster, SSHCluster
 from distributed.diagnostics.plugin import (
     CondaInstall,
     Environ,
+    ForwardTaskErrors,
     NannyPlugin,
     PackageInstall,
     PipInstall,

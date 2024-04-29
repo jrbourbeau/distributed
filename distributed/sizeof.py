@@ -16,9 +16,15 @@ def safe_sizeof(obj: object, default_size: float = 1e6) -> int:
     try:
         return sizeof(obj)
     except Exception:
+        extra = ""
+        if isinstance(obj, dict):
+            extras = [f"{obj=}", f"{obj.keys()=}", f"{obj.values()=}"]
+            extra = "\n".join(extras)
+
         logger.warning(
             f"Sizeof calculation for object of type '{typename(obj)}' failed. "
-            f"Defaulting to {format_bytes(int(default_size))}",
+            f"Defaulting to {format_bytes(int(default_size))}. \n"
+            f"Extra: {extra}",
             exc_info=True,
         )
         return int(default_size)
